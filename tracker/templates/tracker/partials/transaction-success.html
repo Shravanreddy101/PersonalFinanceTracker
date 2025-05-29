@@ -1,0 +1,56 @@
+<div id="transaction-block" class="max-w-md mx-auto mt-10 bg-white rounded-xl shadow-lg p-6 text-center animate-fade-in">
+
+    
+    <div class="flex justify-center mb-4">
+        <svg class="w-16 h-16 text-green-600 animate-pulse" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+    </div>
+
+    
+    <h2 class="text-xl font-bold text-green-700 mb-2">Transaction Added!</h2>
+    <p class="text-gray-700 mb-6">{{ message|default:"Your transaction was successfully saved." }}</p>
+
+
+    <div class="relative w-full h-2 bg-gray-200 rounded-full overflow-hidden mb-6">
+        <div class="absolute left-0 top-0 h-full bg-green-500 animate-progress-bar"></div>
+    </div>
+
+    
+    <div class="flex justify-center gap-4">
+        <button
+            class="bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded shadow"
+            hx-get="{% url 'create-transaction' %}"
+            hx-target="#transaction-block"
+            hx-swap="outerHTML">
+            ➕ Add Another
+        </button>
+
+        <button
+            class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded shadow"
+            hx-get="{% url 'transactions-list' %}"
+            hx-target="#transaction-block"
+            hx-swap="outerHTML">
+            📄 View Transactions
+        </button>
+    </div>
+</div>
+
+
+<style>
+    @keyframes progress-bar {
+    0%   { width: 0%; }
+    100% { width: 100%; }
+    }
+    .animate-progress-bar {
+    animation: progress-bar 2.5s ease-out forwards;
+    }
+
+    @keyframes fade-in {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+    }
+    .animate-fade-in {
+    animation: fade-in 0.4s ease-out;
+    }
+</style>

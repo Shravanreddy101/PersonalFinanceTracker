@@ -1,0 +1,86 @@
+{% load widget_tweaks %}
+{% load humanize %}
+
+<div id="charts-container" class="grid grid-cols-1 md:grid-cols-4 gap-6 mt-4 mb-6">
+
+    
+    <div class="md:col-span-3 flex flex-col gap-6">
+
+        <div id="totals-block" class="m-1 bg-gray-900 p-6 rounded-xl w-full hover:scale-[1] hover:ring-4 hover:ring-blue-500 hover:ring-offset-2 hover:ring-offset-gray-900">
+            <h1 class="mb-6 text-2xl font-bold text-white text-center">Totals</h1>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-white text-lg text-center">
+                <div class="p-4 border border-gray-600 rounded-xl">
+                    <span class="font-medium block">Total Income</span>
+                    <span class="text-green-400 font-bold">${{ total_income|floatformat:2|intcomma }}</span>
+                </div>
+                <div class="p-4 border border-gray-600 rounded-xl">
+                    <span class="font-medium block">Total Expenses</span>
+                    <span class="text-red-400 font-bold">${{ total_expenses|floatformat:2|intcomma }}</span>
+                </div>
+                <div class="p-4 border border-gray-600 rounded-xl">
+                    <span class="font-medium block">Net Income</span>
+                    <span class="{% if net_income > 0 %}text-green-400{% else %}animate-pulse font-bold text-red-400{% endif %}">
+                        ${{ net_income|floatformat:2|intcomma }}
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <div class="m-1 bg-gray-900 p-3 rounded-xl w-full hover:scale-[1] hover:ring-4 hover:ring-blue-500 hover:ring-offset-2 hover:ring-offset-gray-900">
+                {{ income_expense_bar_chart|safe }}
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-0">
+                <div class="bg-gray-900 border-white-700 w-full">
+                    {{ income_pie|safe }}
+                </div>
+                <div class="bg-gray-900 border-white-700 w-full">
+                    {{ expense_pie|safe }}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    
+    <div class="self-start h-fit" style="margin-top: calc(var(--totals-height, 80px));">
+    <div class="flex flex-col h-full justify-start gap-6">
+
+    <div class="bg-gray-800 p-4 rounded-xl shadow-md border border-gray-700 text-white mb-1">
+        <h2 class="text-lg font-semibold mb-2">Quick Actions</h2>
+        <ul class="text-sm space-y-1">
+            <li>📄 <a href="{% url 'exportCharts' %}?{{ request.GET.urlencode }}" download class="underline hover:text-green-400">Download Charts</a></li>
+            <li>📊 <a href="#" class="underline hover:text-green-400">Compare Monthly</a></li>
+        </ul>
+    </div>
+
+        <div class="mr-1 mt-2 bg-gray-800 p-6 rounded-xl shadow-md border border-gray-700 space-y-4 transition-all duration-200 hover:scale-[1.01] hover:ring-4 hover:ring-green-500">
+            <form 
+                hx-get="{% url 'transactions-charts'%}" 
+                hx-target="#charts-container" 
+                hx-swap="outerHTML" 
+                hx-indicator="#spinner" 
+                id="filterform">
+
+                <div class="mb-4 form-control flex flex-col">
+                    {{ filter.form.transaction_type|add_label_class:"label text-white mb-2" }}
+                    {% render_field filter.form.transaction_type class="select bg-gray-50 text-gray-900 px-3 py-2 rounded" %}
+                </div>
+                <div class="mb-4 form-control flex flex-col">
+                    {{ filter.form.start_date|add_label_class:"label text-white mb-2" }}
+                    {% render_field filter.form.start_date class="input bg-gray-50 text-gray-900 px-3 py-2 rounded" %}
+                </div>
+                <div class="mb-4 form-control flex flex-col">
+                    {{ filter.form.end_date|add_label_class:"label text-white mb-2" }}
+                    {% render_field filter.form.end_date class="input bg-gray-50 text-gray-900 px-3 py-2 rounded" %}
+                </div>
+                <div class="mb-6 form-control flex flex-col">
+                    {{ filter.form.category|add_label_class:"label text-white mb-2" }}
+                    {% render_field filter.form.category class="text-green-500 border-gray-300 rounded focus:ring-green-500 px-3 py-2" %}
+                </div>
+
+                <button class="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded">
+                    Filter
+                </button>
+                <span id="spinner" class="loading loading-spinner loading-lg htmx-indicator mt-4 block mx-auto"></span>
+            </form>
+        </div>
+    </div>
+</div>

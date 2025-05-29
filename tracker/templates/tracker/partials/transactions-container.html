@@ -1,0 +1,203 @@
+{% load widget_tweaks %}
+{% load partials %}
+{% load humanize %}
+
+    <div class="flex flex-col-reverse md:grid md:grid-cols-4 md:gap-6 md:items-start gap-y-10 animate-fade-in-down" id="transaction-container">
+        <div class="col-span-3 space-y-10 w-full">
+            <div class="my-4">
+                <div class="bg-gray-900 backdrop-blur-md rounded-xl shadow-lg border border-gray-700 p-5 transition hover:shadow-xl hover:shadow-blue-500/30">
+                    <h1 class="mb-5 prose prose-2xl text-white">
+                        Totals
+                    </h1>
+                    <table class="table-auto w-full text-center">
+                        <thead class="text-white-300 uppercase text-sm border-b border-gray-500">
+                            <tr>
+                                <th class="px-4 py-2 font-medium">Total Income</th>
+                                <th class="px-4 py-2 font-medium">Total Expenses</th>
+                                <th class="px-4 py-2 font-medium">Net Income</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="text-lg font-semibold border-gray-700 transition duration-300 ease-in-out transform hover:scale-[1.01]">
+                                <td class="text-green-400 px-4 py-2 text-xl">${{ total_income|floatformat:2|intcomma }}</td>
+                                <td class="text-red-400 px-4 py-2 text-xl">${{ total_expenses|floatformat:2|intcomma }}</td>
+                                <td class="{% if net_income > 0 %}text-green-400{% else %}animate-pulse text-red-400 font-bold{% endif %} px-4 py-2 text-xl">
+                                    ${{ net_income|floatformat:2|intcomma }}
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        <div class="bg-gray-900 p-5 rounded-xl shadow-md border border-white-700">
+            <div class="flex justify-between items-center mb-6">
+                <h1 class="mb-5 prose prose-2xl text-white">
+                    Transactions
+                </h1>
+                <div class="flex flex-col items-start">
+                    <a hx-get="{% url 'create-transaction' %}"
+                        hx-push-url="true"
+                        hx-target="#transaction-block"
+                        class="cursor-pointer flex items-center space-x-2 mb-2 ml-4"  aria-label="Add new transaction">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="green" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-7 h-7">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v6m3-3H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                        </svg>
+                        <span class="mt-1 text-green-500 font-semibold text-sm transition duration-200 hover:text-green-300 hover:scale-105">Add</span>
+                    </a>
+
+                    <a hx-get="{% url 'export' %}" hx-include="#filterform" class="cursor-pointer flex items-center space-x-2 mb-2 ml-4"  aria-label="Add new transaction">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-7 h-7">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3" />
+                        </svg>
+                        <span class="mt-1 text-blue-500 font-semibold text-sm transition duration-200 hover:text-blue-300 hover:scale-105">Download</span>
+                    </a>
+                </div>
+            </div>
+        
+            {% if transactions %}
+            <table class="table table-fixed w-full">
+                <thead class="text-white uppercase">
+                    <tr class="border-b border-white">
+                        <th class="px-4 py-3 font-semibold text-center">Date</th>
+                        <th class="px-4 py-3 font-semibold text-center">Category</th>
+                        <th class="px-4 py-3 font-semibold text-center">Type</th>
+                        <th class="px-4 py-3 font-semibold text-center">Amount</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for transaction in transactions %}
+                        <tr class="border-b border-gray-700 transition-all duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-[1.01] hover:shadow-2xl hover:shadow-blue-500/40 z-10 relative">
+                                <td class="pt-4 pb-4 px-2 align-top">
+                                    <div class="bg-gray-800 text-white rounded-xl shadow p-3 w-full flex items-center justify-center text-center">
+                                        {{ transaction.date }}
+                                    </div>
+                                </td>
+                                <td class="pt-4 pb-4 px-2 align-top">
+                                    <div class="bg-gray-800 text-white rounded-xl shadow p-3 w-full flex items-center justify-center text-center">
+                                        {{ transaction.category }}
+                                    </div>
+                                </td>
+                                <td class="pt-4 pb-4 px-2 align-top">
+                                    <div class="bg-gray-800 rounded-xl shadow p-3 w-full flex items-center justify-center text-center {% if transaction.type == 'income' %}text-green-400{% else %}text-red-400{% endif %}">
+                                        {{ transaction.type|title }}
+                                    </div>
+                                </td>
+                                <td class="pt-4 pb-4 px-2 align-top">
+                                    <div class="bg-gray-800 text-white rounded-xl shadow p-3 w-full flex items-center justify-center text-center">
+                                        ${{transaction.amount|floatformat:2|intcomma}}
+                                    </div>
+                                </td>
+                                <td class="flex items-center pt-6 pb-4 px-9 align-top">
+                                    <a hx-get = "{% url 'update-transaction' transaction.pk %}" hx-target="#transaction-block" hx-push-url="true" class="cursor-pointer">
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6 mr-5">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10" />
+                                        </svg>
+                                    </a>
+                                    <a hx-delete="{% url 'delete-transaction' transaction.pk %}" hx-push-url="True" hx-target="#transaction-block" class="cursor-pointer" hx-confirm="Are you sure you want to delete Transaction ?">
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
+                                        </svg>
+                                    </a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                </tbody>
+            </table>
+        <div class="mt-6 flex justify-center space-x-2 text-white">
+            {% for num in transactions.paginator.page_range %}
+                {% if num >= transactions.number|add:'-1' and num <= transactions.number|add:'1' %}
+                    {% if num == transactions.number %}
+                        <span class="px-3 py-1 bg-green-600 text-white rounded">{{ num }}</span>
+                    {% else %}
+                        <a hx-get="{% url 'get-transactions' %}?page={{ num }}"
+                        hx-target="#transaction-container"
+                        hx-swap="outerHTML"
+                        hx-include="#filterform"
+                        class="px-3 py-1 bg-gray-700 rounded hover:bg-gray-600">{{ num }}</a>
+                    {% endif %}
+                {% endif %}
+            {% endfor %}
+        </div>
+            {% else %}
+            <p class="text-2xl text-white">No transactions found</p>
+            {% endif %}
+        </div>
+    </div>
+        <div class="col-span-1 mt-2.5 font-semibold bg-gray-800 p-5 rounded-xl shadow-md border border-white/10 space-y-4 hover:shadow-lg hover:shadow-blue-500/30 transition-all duration-300">
+            <div class="flex items-center space-x-2 text-white text-md mb-9">
+                <svg class="w-6 h-6 text-green-400 animate-pulse" fill="none" stroke="currentColor" stroke-width="2"
+                    viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                        d="M3 4a1 1 0 011-1h3.382a1 1 0 01.894.553L9.618 5H20a1 1 0 011 1v2M3 4v16a1 1 0 001 1h16a1 1 0 001-1V9M3 4l6 6h11" />
+                </svg>
+                <h2 class="font-bold">Filter Transactions</h2>
+            </div>
+            <form hx-get="{% url 'transactions-list'%}" hx-target="#transaction-container" hx-swap="outerHTML" id="filterform">
+                <div class="mb-4 form-control flex flex-col">
+                    {{filter.form.transaction_type|add_label_class:"label text-white mb-4" }}
+                    {% render_field filter.form.transaction_type class="select bg-gray-50 text-gray-900 px-3 py-2 rounded focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent" %}
+                </div>
+                <hr class="border-t border-white/20 my-4" />
+
+                <div class="mb-4 form-control flex flex-col">
+                    {{filter.form.greater_than_amount|add_label_class:"label text-white mb-4" }}
+                    <div class="relative w-full">
+                        <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-black text-sm">$</span>
+                        {% render_field filter.form.greater_than_amount class="bg-gray-50 text-gray-900 pl-6 py-2 rounded w-full border focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent" %}
+                    </div>
+                </div>
+
+                <div class="mb-4 form-control flex flex-col">
+                    {{filter.form.less_than_amount|add_label_class:"label text-white mb-4" }}
+                    <div class="relative w-full">
+                        <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-black text-sm">$</span>
+                        {% render_field filter.form.less_than_amount class="bg-gray-50 text-gray-900 pl-6 py-2 rounded w-full border focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent" %}
+                    </div>
+                </div>
+                <hr class="border-t border-white/20 my-4" />
+
+                <div class="mb-4 form-control flex flex-col">
+                    {{filter.form.start_date|add_label_class:"label text-white mb-4" }}
+                    {% render_field filter.form.start_date class="input bg-gray-50 text-gray-900 px-3 py-2 rounded focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent" %}
+                </div>
+
+                <div class="mb-4 form-control flex flex-col">
+                    {{filter.form.end_date|add_label_class:"label text-white mb-4" }}
+                    {% render_field filter.form.end_date class="input bg-gray-50 text-gray-900 px-3 py-2 rounded focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent" %}
+                </div>
+
+                <div class="mb-6 form-control flex flex-col">
+                    {% render_field filter.form.category class="text-green-500 border-gray-300 rounded focus:ring-green-500 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent" %}
+                </div>
+
+            <div class="flex justify-between mt-6">
+                <button class="bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded">
+                    Filter
+                </button>
+                <button type="reset" class="bg-gray-700 hover:bg-gray-600 text-white font-medium py-2 px-4 rounded">
+                    Reset
+                </button>
+            </div>
+                    
+            </form>
+        </div>
+    </div>
+
+
+    <style>
+    @keyframes fade-in-down {
+        from {
+        opacity: 0;
+        transform: translateY(-10px);
+        }
+        to {
+        opacity: 1;
+        transform: translateY(0);
+        }
+    }
+
+    .animate-fade-in-down {
+        animation: fade-in-down 0.5s ease-out;
+    }
+    </style>
