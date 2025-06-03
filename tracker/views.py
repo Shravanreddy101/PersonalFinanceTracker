@@ -3,9 +3,9 @@ from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_http_methods
 from django.core.paginator import Paginator
 from django.conf import settings
-from tracker.models import Transaction
+from tracker.models import CategoryBudget, Transaction
 from tracker.filters import TransactionFilter
-from tracker.forms import TransactionForm
+from tracker.forms import CategoryBudgetForm, TransactionForm
 from django_htmx.http import retarget
 from tracker.charting import plot_income_expenses_bar_chart, plot_category_pie_chart
 from tracker.resources import TransactionResource
@@ -21,6 +21,7 @@ from reportlab.lib.utils import ImageReader
 from django.utils import timezone
 from datetime import timedelta, datetime
 from django.db import models
+from django.utils.timezone import now
 
 
 
@@ -28,19 +29,31 @@ from django.db import models
 def index(request):
     if request.user.is_authenticated:
         queryset = Transaction.objects.filter(user=request.user).select_related('category')
+        today = now()
+        current_month_year = today.strftime('%B %Y')
+        current_month_qs = Transaction.objects.filter(user=request.user,date__year=today.year, date__month=today.month)
     else:
         queryset = Transaction.objects.none()
+        current_month_qs = Transaction.objects.none()
+        current_month_year = now().strftime('%B %Y')
 
     transaction_filter = TransactionFilter(request.GET, queryset=queryset)
 
     total_income = transaction_filter.qs.get_total_income()
     total_expenses = transaction_filter.qs.get_total_expenses()
+
+    current_month_income = current_month_qs.get_total_income()
+    current_month_expenses = current_month_qs.get_total_expenses()
+    
     
     context = {
         'filter': transaction_filter,
         'total_income': total_income,
         'total_expenses': total_expenses,
         'net_income': total_income - total_expenses,
+        'current_income' : current_month_income,
+        'current_expenses': current_month_expenses,
+        'current_date' : current_month_year
     }
     
     return render(request, 'tracker/index.html', context)
@@ -224,7 +237,49 @@ def export_charts(request):
         if y < 300:
             p.showPage()
             y = height - 100
-
     p.save()
     buffer.seek(0)
     return FileResponse(buffer, as_attachment=True, filename='charts.pdf')
+
+
+
+def get_top_expenses(request):
+    transaction_filter = TransactionFilter(
+        request.GET,
+        queryset= Transaction.objects.filter(user=request.user).select_related('category')
+    )
+    top_10 = transaction_filter.qs.get_top_10_expenses()
+    total_expenses = transaction_filter.qs.get_total_top_10_expenses()
+    context = {'filter' : transaction_filter,'transactions' : top_10, 'total_expenses' : total_expenses, }
+    return render(request, 'tracker/partials/transactions-container.html', context)
+
+
+
+
+def set_category_budget(request):
+    if request.method == 'POST':
+        form = CategoryBudgetForm(request.POST)
+        if form.is_valid():
+            budget = form.save(commit=False)
+            budget.user = request.user
+            budget.save()
+
+            budgets = CategoryBudget.objects.filter(user=request.user).select_related('category')
+            context = {"budgets" : budgets}
+            return render(request, 'tracker/partials/budget_progress.html', context)
+        else:
+            context = {'form' : form}
+            response = render(request, 'tracker/partials/set-budget.html', context)
+            return retarget(response, '#transaction-block')
+    context = {'form' : CategoryBudgetForm()}
+    if request.htmx:
+        return render(request, 'tracker/partials/set-budget.html', context)
+    else:
+        return render(request, 'tracker/set-base-budget.html', context)
+    
+
+
+@login_required
+def category_budget_progress(request):
+    budgets = CategoryBudget.objects.filter(user=request.user).select_related('category')
+    return render(request, 'tracker/view-budgets.html', {'budgets': budgets})

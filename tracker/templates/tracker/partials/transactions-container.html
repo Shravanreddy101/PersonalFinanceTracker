@@ -6,7 +6,7 @@
         <div class="col-span-3 space-y-10 w-full">
             <div class="my-4">
                 <div class="bg-gray-900 backdrop-blur-md rounded-xl shadow-lg border border-gray-700 p-5 transition hover:shadow-xl hover:shadow-blue-500/30">
-                    <h1 class="mb-5 prose prose-2xl text-white">
+                    <h1 class="mb-11 prose prose-2xl text-white font-semibold text-center">
                         Totals
                     </h1>
                     <table class="table-auto w-full text-center">
@@ -30,22 +30,23 @@
                 </div>
             </div>
         <div class="bg-gray-900 p-5 rounded-xl shadow-md border border-white-700">
-            <div class="flex justify-between items-center mb-6">
-                <h1 class="mb-5 prose prose-2xl text-white">
+            <div class="justify-center text center mb-4">
+                <h1 class="prose prose-2xl text-white font-semibold text-center ml-2">
                     Transactions
                 </h1>
-                <div class="flex flex-col items-start">
+                
+                <div class="flex flex-row justify-center mb-7 mt-7 gap-7">
                     <a hx-get="{% url 'create-transaction' %}"
                         hx-push-url="true"
                         hx-target="#transaction-block"
-                        class="cursor-pointer flex items-center space-x-2 mb-2 ml-4"  aria-label="Add new transaction">
+                        class="cursor-pointer flex items-center space-x-2 mb-2 ml-4"  aria-label="Add new transaction" title="Add a new Transaction">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="green" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-7 h-7">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v6m3-3H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
                         </svg>
                         <span class="mt-1 text-green-500 font-semibold text-sm transition duration-200 hover:text-green-300 hover:scale-105">Add</span>
                     </a>
 
-                    <a hx-get="{% url 'export' %}" hx-include="#filterform" class="cursor-pointer flex items-center space-x-2 mb-2 ml-4"  aria-label="Add new transaction">
+                    <a hx-get="{% url 'export' %}" hx-include="#filterform" class="cursor-pointer flex items-center space-x-2 mb-2 ml-4" title="Download Transactions">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-7 h-7">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3" />
                         </svg>
@@ -53,6 +54,7 @@
                     </a>
                 </div>
             </div>
+            
         
             {% if transactions %}
             <table class="table table-fixed w-full">
@@ -62,7 +64,7 @@
                         <th class="px-4 py-3 font-semibold text-center">Category</th>
                         <th class="px-4 py-3 font-semibold text-center">Type</th>
                         <th class="px-4 py-3 font-semibold text-center">Amount</th>
-                        <th></th>
+                        <th class="px-4 py-3 font-semibold text-center">Edit</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -137,6 +139,12 @@
                 <div class="mb-4 form-control flex flex-col">
                     {{filter.form.transaction_type|add_label_class:"label text-white mb-4" }}
                     {% render_field filter.form.transaction_type class="select bg-gray-50 text-gray-900 px-3 py-2 rounded focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent" %}
+                </div>
+                <hr class="border-t border-white/20 my-4" />
+
+                <div class="mb-4 form-control flex flex-col">
+                    {{filter.form.date_month|add_label_class:"label text-white mb-4" }}
+                    {% render_field filter.form.date_month class="select bg-gray-50 text-gray-900 px-3 py-2 rounded focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent" %}
                 </div>
                 <hr class="border-t border-white/20 my-4" />
 

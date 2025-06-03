@@ -3,17 +3,17 @@
 <div id="transaction-block" class="animate-fade-in-up">
     <div class="flex flex-col items-center mt-7 mb-7">
         <h1 class="prose prose-2xl text-white text-center font-semibold">
-            Create Transaction
+            Set Budget
         </h1>
     </div>
 
-    <form hx-post="{% url 'create-transaction' %}" hx-target="#transaction-block">
+    <form hx-post="{% url 'set-budget' %}" hx-target="#transaction-block">
         {% csrf_token %}
         <div class="bg-gray-800 rounded-xl p-6 shadow-lg max-w-xl mx-auto animate-fade-in-up">
             <div class="mb-4 form-control flex flex-col text-black">
-                {{ form.type|add_label_class:"label text-white mb-2 label-slide-in" }}
+                {{ form.category|add_label_class:"label text-white mb-2 label-slide-in" }}
                 <div class="flex items-center bg-gray-50 text-gray-900 px-3 py-2 rounded w-full">
-                    {% render_field form.type class="bg-transparent outline-none w-full" %}
+                    {% render_field form.category class="bg-transparent outline-none w-full" %}
                 </div>
             </div>
 
@@ -29,13 +29,8 @@
             </div>
 
             <div class="mb-4 form-control flex flex-col text-black">
-                {{ form.date|add_label_class:"label text-white mb-2 label-slide-in" }}
-                {% render_field form.date class="input bg-gray-50 text-gray-900 px-3 py-2 rounded w-full" %}
-            </div>
-
-            <div class="mb-4 form-control flex flex-col text-black">
-                {{ form.category|add_label_class:"label text-white mb-2 label-slide-in" }}
-                {% render_field form.category class="text-green-500 border-gray-300 rounded focus:ring-green-500 px-0.5 py-2" %}
+                {{ form.month|add_label_class:"label text-white mb-2 label-slide-in" }}
+                {% render_field form.month class="bg-gray-50 text-gray-900 px-3 py-2 rounded w-full" %}
             </div>
 
             <button class="bg-green-600 hover:bg-green-700 text-white font-semibold mt-2 py-2 px-7 rounded button-animate">
@@ -45,16 +40,19 @@
                     hx-get="{% url 'transactions-list' %}" hx-target="#transaction-block" hx-push-url='/transactions'>
                 Cancel
             </button>
+            
         </div>
     </form>
 
+            
     <script>
-    document.body.addEventListener('htmx:afterSwap', function(event) {
-        if (event.detail.target.id === 'transaction-block') {
-            document.getElementById('transaction-block').scrollIntoView({ behavior: 'smooth' });
-        }
-    });
+        document.body.addEventListener('htmx:afterSwap', function(event) {
+            if (event.detail.target.id === 'transaction-block') {
+                document.getElementById('transaction-block').scrollIntoView({ behavior: 'smooth' });
+            }
+        });
     </script>
+
 </div>
 
 
@@ -71,32 +69,7 @@
     }
 
     .animate-fade-in-up {
-    animation: fadeInUp 0.5s ease-out;
-    }
-
-    @keyframes pulseButton {
-    0%, 100% { transform: scale(1); }
-    50% { transform: scale(1.05); }
-    }
-
-    .button-animate:hover {
-    animation: pulseButton 0.3s ease-in-out;
-    }
-
-    .label-slide-in {
-    position: relative;
-    animation: slideInLabel 0.4s ease;
-    }
-
-    @keyframes slideInLabel {
-    0% {
-        opacity: 0;
-        left: -10px;
-    }
-    100% {
-        opacity: 1;
-        left: 0;
-    }
+    animation: fadeInUp 1s ease-out;
     }
 
 </style>

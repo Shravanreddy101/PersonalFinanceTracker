@@ -36,3 +36,33 @@ class Transaction(models.Model):
     
     class Meta:
         ordering = ['-date']
+
+
+class CategoryBudget(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    category = models.ForeignKey(Category, on_delete=models.CASCADE)
+    month = models.DateField(help_text="First day of the month")
+    amount = models.DecimalField(max_digits=10, decimal_places=2)
+
+    class Meta:
+        unique_together = ('user','category', 'month')
+    
+    def __str__(self):
+        return f"{self.user} - {self.month.strftime('%B %Y')} - ${self.amount}"
+    
+    def get_total_spent(self):
+        return(
+            Transaction.objects.filter(
+                user=self.user,
+                category = self.category,
+                type='expense',
+                date__year = self.month.year,
+                date__month = self.month.month
+            ).aggregate(total=models.Sum('amount'))['total'] or 0 
+        )
+    
+    def get_progress_bar(self):
+        spent = self.get_total_spent()
+        if self.amount > 0:
+            return min((spent / self.amount) * 100, 100)
+        return 0

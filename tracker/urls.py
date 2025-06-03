@@ -12,5 +12,8 @@ urlpatterns = [
     path("transactions/charts", views.transactions_charts, name='transactions-charts'),
     path("transactions/export", views.export, name='export'),
     path("transactions/charts/exportChart", views.export_charts, name='exportCharts'),
-
+    path('top-expenses/', views.get_top_expenses, name='get-top-expenses'),
+    path('transactions/setbudget/', views.set_category_budget, name='set-budget'),
+    path('transactions/category-budgets/', views.category_budget_progress, name='category-budgets'),
+    
 ]
