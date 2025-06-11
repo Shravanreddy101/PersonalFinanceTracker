@@ -13,7 +13,7 @@ SECRET_KEY = "django-insecure-hfjjz86s+pz6y4p=&mxz)dis&l$+mt2)6r$ho@))^5))f#$whp
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['personalfinancetracker-i77j.onrender.com', 'localhost', '127.0.0.1']
 
 
 # Application definition
