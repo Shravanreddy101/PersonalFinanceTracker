@@ -19,7 +19,7 @@ import io
 import base64
 from reportlab.lib.utils import ImageReader
 from django.utils import timezone
-from datetime import timedelta, datetime
+import datetime
 from django.db import models
 from django.utils.timezone import now
 
@@ -27,23 +27,21 @@ from django.utils.timezone import now
 
 
 def index(request):
-    if request.user.is_authenticated:
-        queryset = Transaction.objects.filter(user=request.user).select_related('category')
-        today = now()
-        current_month_year = today.strftime('%B %Y')
-        current_month_qs = Transaction.objects.filter(user=request.user,date__year=today.year, date__month=today.month)
-    else:
-        queryset = Transaction.objects.none()
-        current_month_qs = Transaction.objects.none()
-        current_month_year = now().strftime('%B %Y')
-
-    transaction_filter = TransactionFilter(request.GET, queryset=queryset)
+    transaction_filter = TransactionFilter(
+        request.GET,
+        queryset=Transaction.objects.filter(user=request.user).select_related('category')
+    )
 
     total_income = transaction_filter.qs.get_total_income()
     total_expenses = transaction_filter.qs.get_total_expenses()
 
-    current_month_income = current_month_qs.get_total_income()
-    current_month_expenses = current_month_qs.get_total_expenses()
+    selected_month = request.GET.get('date_month')
+    today = now()
+    if selected_month and selected_month.isdigit():
+        month_name = datetime.date(1900, int(selected_month), 1).strftime('%B')
+        current_month_year = f"{month_name} {today.year}"
+    else:
+        current_month_year = today.strftime('%B %Y')
     
     
     context = {
@@ -51,10 +49,10 @@ def index(request):
         'total_income': total_income,
         'total_expenses': total_expenses,
         'net_income': total_income - total_expenses,
-        'current_income' : current_month_income,
-        'current_expenses': current_month_expenses,
         'current_date' : current_month_year
     }
+    if request.htmx:
+        return render(request, 'tracker/partials/totals.html', context)
     
     return render(request, 'tracker/index.html', context)
 

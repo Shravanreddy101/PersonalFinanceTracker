@@ -150,7 +150,7 @@
 
                 <div class="mb-4 form-control flex flex-col">
                     {{filter.form.greater_than_amount|add_label_class:"label text-white mb-4" }}
-                    <div class="relative w-full">
+                    <div class="relative w-auto">
                         <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-black text-sm">$</span>
                         {% render_field filter.form.greater_than_amount class="bg-gray-50 text-gray-900 pl-6 py-2 rounded w-full border focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent" %}
                     </div>
@@ -158,7 +158,7 @@
 
                 <div class="mb-4 form-control flex flex-col">
                     {{filter.form.less_than_amount|add_label_class:"label text-white mb-4" }}
-                    <div class="relative w-full">
+                    <div class="relative w-auto">
                         <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-black text-sm">$</span>
                         {% render_field filter.form.less_than_amount class="bg-gray-50 text-gray-900 pl-6 py-2 rounded w-full border focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent" %}
                     </div>
@@ -179,11 +179,11 @@
                     {% render_field filter.form.category class="text-green-500 border-gray-300 rounded focus:ring-green-500 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent" %}
                 </div>
 
-            <div class="flex justify-between mt-6">
-                <button class="bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded">
+            <div class="flex flex-row mt-6 gap-3">
+                <button class="bg-green-600 hover:bg-green-800 text-white font-semibold py-2 px-4 rounded">
                     Filter
                 </button>
-                <button type="reset" class="bg-gray-700 hover:bg-gray-600 text-white font-medium py-2 px-4 rounded">
+                <button class="bg-blue-600 hover:bg-blue-800 text-white font-medium py-2 px-4 rounded"  hx-get="{% url 'transactions-list'%}" hx-swap="outerHTML" hx-target="#transaction-container">
                     Reset
                 </button>
             </div>

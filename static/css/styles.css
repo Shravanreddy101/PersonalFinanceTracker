@@ -1,12 +1,26 @@
 body {
-    background-image: linear-gradient(to right top, #212f45, #1b3a50, #104458, #054f5e, #065a60);
-    min-height: 100vh;
+background-image: linear-gradient(to right top, #c4d9f9, #8fb8f7,#c4d9f9, #8fb8f7, #c4e5ff) !important;
+min-height: 100vh;
 }
 
 nav {
     color: white;
-    background-color: #182c34;
+    background-color: #000000;
 }
 
+
+.gradient-title{
+    color: #e7e7fb;
+    font-family:'Bebas Neue', sans-serif;
+    font-weight: 900;
+    text-shadow: 0.5px 0.5px #ffffff;
+    font-size: 3rem !important;
+    letter-spacing: 1px;
+    
+}
+
+.glow-text {
+    text-shadow:0 0 5px rgb(90, 90, 253), 0 0 10px rgb(47, 47, 158), 0 0 20px rgb(102, 138, 248);
+}
 
 
