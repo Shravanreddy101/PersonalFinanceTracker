@@ -25,7 +25,7 @@ from django.utils.timezone import now
 
 
 
-
+@login_required
 def index(request):
     transaction_filter = TransactionFilter(
         request.GET,
@@ -111,7 +111,7 @@ def create_transaction(request):
 
 
 
-
+@login_required
 def update_transaction(request,pk):
     transaction = get_object_or_404(Transaction, pk=pk, user=request.user)
     if request.method == 'POST':
@@ -172,7 +172,7 @@ def get_transactions(request):
 
 
 
-
+@login_required
 def transactions_charts(request):
     transaction_filter = TransactionFilter(
         request.GET,
@@ -208,7 +208,7 @@ def export(request):
 
 
 
-
+@login_required
 def export_charts(request):
     transaction_filter = TransactionFilter(
         request.GET,
@@ -240,7 +240,7 @@ def export_charts(request):
     return FileResponse(buffer, as_attachment=True, filename='charts.pdf')
 
 
-
+@login_required
 def get_top_expenses(request):
     transaction_filter = TransactionFilter(
         request.GET,
@@ -253,7 +253,7 @@ def get_top_expenses(request):
 
 
 
-
+@login_required
 def set_category_budget(request):
     if request.method == 'POST':
         form = CategoryBudgetForm(request.POST)
