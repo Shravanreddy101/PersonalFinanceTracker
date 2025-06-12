@@ -4,6 +4,15 @@ from tracker.models import Category, Transaction, CategoryBudget
 
 
 class TransactionForm(forms.ModelForm):
+
+
+    custom_category = forms.CharField(
+        required = False,
+        label = "Custom Category",
+        widget = forms.TextInput(attrs={'Placeholder': 'Enter new category name'})
+    )
+
+
     category = forms.ModelChoiceField(
         queryset = Category.objects.all(),
         widget = forms.RadioSelect()
@@ -22,10 +31,17 @@ class TransactionForm(forms.ModelForm):
             'amount',
             'date',
             'category',
+            'custom_category'
         )
         widgets = {
             'date' : forms.DateInput(attrs={'type' : 'date'})
         }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['category'].required = False
+
+
 
 
 class CategoryBudgetForm(forms.ModelForm):

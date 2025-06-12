@@ -35,7 +35,17 @@
 
             <div class="mb-4 form-control flex flex-col text-black">
                 {{ form.category|add_label_class:"label text-white mb-2 label-slide-in" }}
-                {% render_field form.category class="text-green-500 border-gray-300 rounded focus:ring-green-500 px-0.5 py-2" %}
+                {% render_field form.category class="toggle-radio text-green-500 border-gray-300 rounded focus:ring-green-500 px-0.5 py-2" %}
+            </div>
+
+            <div class="mb-8 form-control flex flex-col text-black mt-6">
+                {{ form.custom_category|add_label_class:"label text-white mb-2 label-slide-in" }}
+                <div class="flex items-center bg-gray-50 px-3 py-2 rounded w-full">
+                    {% render_field form.custom_category class="bg-gray-50 text-black placeholder-black rounded-lg outline-none w-full" %}
+                </div>
+                {% for error in form.custom_category.errors %}
+                    <p class="text-red-400 mt-1 animate-fade-in-up">{{ error }}</p>
+                {% endfor %}
             </div>
 
             <button class="bg-green-600 hover:bg-green-700 text-white font-semibold mt-2 py-2 px-7 rounded button-animate">
@@ -55,6 +65,31 @@
         }
     });
     </script>
+
+    <script>
+document.addEventListener('DOMContentLoaded', function () {
+    const radios = document.querySelectorAll('input.toggle-radio');
+
+    radios.forEach(radio => {
+        radio.addEventListener('mousedown', function (e) {
+            this.wasChecked = this.checked;
+        });
+
+        radio.addEventListener('click', function (e) {
+            if (this.wasChecked) {
+                this.checked = false;
+
+                
+                const hidden = document.createElement('input');
+                hidden.type = 'hidden';
+                hidden.name = this.name;
+                hidden.value = '';
+                this.closest('form').appendChild(hidden);
+            }
+        });
+    });
+});
+</script>
 </div>
 
 

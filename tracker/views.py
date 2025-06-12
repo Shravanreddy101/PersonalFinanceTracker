@@ -3,7 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_http_methods
 from django.core.paginator import Paginator
 from django.conf import settings
-from tracker.models import CategoryBudget, Transaction
+from tracker.models import CategoryBudget, Transaction, Category
 from tracker.filters import TransactionFilter
 from tracker.forms import CategoryBudgetForm, TransactionForm
 from django_htmx.http import retarget
@@ -92,7 +92,35 @@ def create_transaction(request):
         if form.is_valid():
             transaction = form.save(commit=False)
             transaction.user = request.user
+
+            custom_category_name = form.cleaned_data.get('custom_category', '').strip()
+            selected_category = form.cleaned_data.get('category')
+
+            print("DEBUG: custom_category =", custom_category_name)
+            print("DEBUG: selected_category =", selected_category)
+
+            if custom_category_name and selected_category:
+                form.add_error('custom_category', 'Please choose either a predefined category or enter a new one — not both.')
+                form.add_error('category', 'Please choose either a predefined category or enter a new one — not both.')
+                context = {'form': form}
+                response = render(request, 'tracker/partials/create-transaction.html', context)
+                return retarget(response, '#transaction-block')
+
+
+            if custom_category_name:
+                category,created = Category.objects.get_or_create(name=custom_category_name)
+            elif selected_category:
+                category = selected_category
+            else:
+                form.add_error('category','Please select or enter a category')
+                context = {'form' : form}
+                response = render(request, 'tracker/partials/create-transaction.html', context)
+                return retarget(response, '#transaction-block')
+
+            
+            transaction.category = category
             transaction.save()
+
             context = {'message' : 'Transaction added successfully!'}
             if request.htmx:
                 return render(request, 'tracker/partials/transaction-success.html', context)
@@ -140,7 +168,12 @@ def update_transaction(request,pk):
 @require_http_methods(["DELETE"])
 def delete_transaction(request,pk):
     transaction = get_object_or_404(Transaction, pk=pk, user=request.user)
+    category = transaction.category
     transaction.delete()
+
+    if not Transaction.objects.filter(category=category).exists():
+        category.delete()
+
     context = {
         'message' : f"Transaction amount of {transaction.amount} on {transaction.date} was deleted successfully!"
     }
@@ -148,6 +181,20 @@ def delete_transaction(request,pk):
 
 
 
+@login_required
+@require_http_methods(["DELETE"])
+def delete_category(request,pk):
+    category = get_object_or_404(Category, pk=pk)
+
+    if not Transaction.objects.filter(category=category).exists():
+        category.delete()
+        messages.success(request, "Category Deleted Successfully")
+    else:
+        messages.error(request, "Cannot delete category with existing transactions")
+    
+    form = TransactionForm()
+    context = {'form': form}
+    return render(request, 'tracker/create-base-transaction.html', context)
 
 
 @login_required

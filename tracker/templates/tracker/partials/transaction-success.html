@@ -30,7 +30,8 @@
             class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded shadow"
             hx-get="{% url 'transactions-list' %}"
             hx-target="#transaction-block"
-            hx-swap="outerHTML">
+            hx-swap="innerHTML"
+            hx-push-url='/transactions'>
             📄 View Transactions
         </button>
     </div>
