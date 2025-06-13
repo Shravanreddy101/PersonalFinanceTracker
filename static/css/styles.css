@@ -19,8 +19,19 @@ nav {
     
 }
 
+.greeting {
+    font-family: 'Lilita One', cursive;
+    color: #73eda0;
+    text-shadow: 0.5px 0.5px #fffbfb;
+    letter-spacing: 1.4px;
+}
+
 .glow-text {
     text-shadow:0 0 5px rgb(90, 90, 253), 0 0 10px rgb(47, 47, 158), 0 0 20px rgb(102, 138, 248);
+}
+
+.glow-text1 {
+    text-shadow:0 0 5px rgb(255, 255, 255), 0 0 10px rgb(255, 247, 247), 0 0 20px rgb(255, 255, 255);
 }
 
 

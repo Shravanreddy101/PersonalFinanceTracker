@@ -7,9 +7,10 @@
 {% load account socialaccount %}
 
 {% block content %}
+
 <div class="flex flex-col items-center px-4 sm:px-6 lg:px-8">
-    <div class="flex items-center justify-center text-center mt-8 mb-6">
-        <h1 class="text-5xl lg:text-4xl font-semibold gradient-title glow-text mb-4 mt-2 ml-4">
+    <div class="flex items-center mt-8 mb-6">
+        <h1 class="text-6xl lg:text-4xl font-semibold gradient-title glow-text mb-4 mt-2 ml-4">
             Welcome to your Personal Finance Tracker<span class="ml-4 inline-block animate-bounce">🏦</span>
         </h1>
         
@@ -28,45 +29,61 @@
     
 
 {% if user.is_authenticated %}
-
-<div class="w-full flex flex-col items-center gap-6 mt-6">
+<div class="max-w-2xl md:max-w-screen-xl bg-white bg-opacity-40 backdrop-blur-md p-5 md:p-10 rounded-lg shadow">
+<div class="w-full flex flex-col items-center gap-6 mt-2">
     <div class="space-y-6 max-w-xl md:max-w-2xl">
-        <div class="bg-gray-800 rounded-lg shadow-lg p-3 text-white hover:scale-105 transition w-full flex flex-row flex-wrap items-center text-xs md:text-lg">
-
-            <div class="flex-1">
-                <h2 class="font-semibold mb-10 sm:mb-14 text-left text-sm md:text-xl">Hello, {{ user.username }}<span class="ml-2">😀</span></h2>
-                <div class="grid grid-cols-3 gap-x-14 md:gap-x-15 text-left">
-                    <div>
-                        <p class="font-semibold whitespace-nowrap">Total Income :</p>
-                        <p class="text-green-400 font-semibold">${{ total_income|floatformat:2|intcomma }}</p>
+        <h2 class="greeting glow-text text-4xl mb-10 sm:mb-14 text-left ml-5">Hello, {{ user.username|title }}<span class="ml-3">😀</span></h2>
+        <div class="max-w-2xl md:max-w-screen-xl bg-white bg-opacity-40 backdrop-blur-md p-3 md:p-5 rounded-lg shadow">
+            <h2 class="gradient-title glow-text flex justify-start ml-2 mb-2">Totals</h2>
+            <div class="bg-gray-800 rounded-lg shadow-lg p-2 md:p-4 text-white hover:scale-105 transition w-full items-center text-xs md:text-lg">
+                <div class="mb-2">
+                        <div class="flex flex-row mb-4 mt-2 gap-x-20 md:gap-x-32  justify-center">
+                            <div>
+                                <p class="font-semibold">Income:</p>
+                                <p class="text-green-400 font-semibold">${{ total_income|floatformat:2|intcomma }}</p>
+                            </div>
+                            <div>
+                                <p class="font-semibold">Expenses:</p>
+                                <p class="text-red-400 font-semibold">${{ total_expenses|floatformat:2|intcomma }}</p>
+                            </div>
+                            <div>
+                                <p class="font-semibold">Net Income:</p>
+                                <p class="font-semibold {% if net_income > 0 %}text-green-400{% else %}text-red-400{% endif %}">${{ net_income|floatformat:2|intcomma }}</p>
+                            </div>
+                        </div>
+                </div>
+                <div class="flex flex row items-center justify-center gap-x-20 md:gap-x-32">
+                    <div class="w-20 md:w-32">
+                        <img src="{% static 'images/moneydribble.gif' %}" class="p-1 rounded-lg w-full h-auto" />
                     </div>
-                    <div>
-                        <p class="font-semibold whitespace-nowrap">Total Expenses :</p>
-                        <p class="text-red-400 font-semibold">${{ total_expenses|floatformat:2|intcomma }}</p>
+                    <div class="w-20 md:w-28">
+                        <img src="{% static 'images/realexpenses.gif' %}" class="p-1.5 rounded-lg w-full h-auto" />
                     </div>
-                    <div>
-                        <p class="font-semibold whitespace-nowrap">Net Income :</p>
-                        <p class="font-semibold {% if net_income > 0 %}text-green-400{% else %}text-red-400{% endif %}">${{ net_income|floatformat:2|intcomma }}</p>
+                    <div class="w-20 md:w-32">
+                        <img src="{% static 'images/moneyflow.gif' %}" class="p-1 rounded-lg w-full h-auto" />
                     </div>
                 </div>
             </div>
-            <div class="w-10 md:w-40 self-start">
-                <img src="{% static 'images/income-expense.gif' %}" class="p-1 rounded-lg w-full h-auto" />
-            </div>
         </div>
+        
+    
 
 
     
 <img src="{% static 'images/new-finance.gif' %}" alt="Finance animation" class="rounded-lg shadow-md w-full h-auto max-w-2xl "/>
-    <div>
-        {% include 'tracker/partials/totals.html' %}
-    </div>
+<div class="max-w-2xl md:max-w-screen-xl bg-white bg-opacity-40 backdrop-blur-md p-3 md:p-5 rounded-lg shadow">
+    <h2 class="gradient-title glow-text flex items-center justify-start ml-2">Monthly Finances</h2>
+        <div>
+            {% include 'tracker/partials/totals.html' %}
+        </div>
+</div>
 
 
 
-
+<div class="max-w-2xl md:max-w-screen-xl bg-white bg-opacity-40 backdrop-blur-md p-3 md:p-5 rounded-lg shadow">
+    <h2 class="gradient-title glow-text flex justify-start ml-2">Links</h2>
     <div class="flex flex-row justify-between items-start w-full max-w-2xl gap-5">
-        <div class="flex flex-col space-y-4 w-full max-w-xs sm:max-w-none mt-4">
+        <div class="flex flex-col space-y-4 w-full max-w-xs sm:max-w-none mt-2">
             <div class="bg-gray-800 rounded-lg p-4 shadow-lg hover:scale-105 transition">
                 <a href="{% url 'transactions-list' %}" class="text-white flex items-center font-semibold hover:text-green-300 hover:underline">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-7 h-7 mr-2">
@@ -97,7 +114,7 @@
         </div>
         <div class="flex flex-col items-center gap-2.5">
             <div class="flex-shrink md:flex-shrink-0 w-16">
-                <img src="{% static 'images/spreadsheet.gif' %}" class="rounded-lg w-full h-auto mt-4"/>
+                <img src="{% static 'images/spreadsheet.gif' %}" class="rounded-lg w-full h-auto mt-2"/>
             </div>
             <div class="flex-shrink md:flex-shrink-0 w-16">
                 <img src="{% static 'images/newpie.gif' %}" class="rounded-lg w-full h-auto"/>
@@ -107,17 +124,19 @@
             </div>
         </div>
     </div>
+</div>
 
 
 </div>
 
 </div>
-
+</div>
     {% endif %}
 
     <footer class="text-white text-sm font-bold text-center mt-12 mb-4">
         &copy; 2025 FinanceTracker — Built by Shravan Reddy
     </footer>
+
 
 </div>
 
