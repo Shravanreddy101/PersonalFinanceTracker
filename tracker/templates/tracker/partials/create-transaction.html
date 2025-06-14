@@ -7,9 +7,10 @@
         </h1>
     </div>
 
+    <div class="max-w-xl md:max-w-2xl bg-white bg-opacity-40 backdrop-blur-md p-5 md:p-8 rounded-lg shadow mx-auto">
     <form hx-post="{% url 'create-transaction' %}" hx-target="#transaction-block">
         {% csrf_token %}
-    <div class="max-w-xl md:max-w-2xl bg-white bg-opacity-40 backdrop-blur-md p-5 md:p-8 rounded-lg shadow ml-36">
+    
         <div class="bg-gray-800 rounded-xl p-6 shadow-lg max-w-2xl mx-auto animate-fade-in-up">
             <div class="mb-4 form-control flex flex-col text-black">
                 {{ form.type|add_label_class:"label text-white mb-2 label-slide-in" }}
@@ -57,8 +58,8 @@
                 Cancel
             </button>
         </div>
-    </div>
     </form>
+    </div>
 
     <script>
     document.body.addEventListener('htmx:afterSwap', function(event) {

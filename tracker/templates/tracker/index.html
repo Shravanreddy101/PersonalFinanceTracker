@@ -9,11 +9,10 @@
 {% block content %}
 
 <div class="flex flex-col items-center px-4 sm:px-6 md:px-8">
-    <div class="flex items-center mt-8 mb-6">
-        <h1 class="text-4xl md:text-6xl font-semibold gradient-title glow-text mb-4 mt-2 ml-4">
+    <div class="flex justify-center">
+        <h1 class="text-4xl md:text-6xl font-semibold gradient-title glow-text leading-tight mt-12 mb-12">
             Welcome to your Personal Finance Tracker<span class="ml-4 inline-block animate-bounce">🏦</span>
         </h1>
-        
     </div>
 {% if not user.is_authenticated %}
     <img src="{% static 'images/new-login.gif' %}" class="w-80 mb-2"/>
@@ -33,18 +32,20 @@
 <div class="w-full flex flex-col items-center">
     <div class="space-y-12 max-w-2xl md:max-w-screen-xl">
         <div class="flex flex-row justify-center">
-            <h2 class="greeting glow-text1 flex items-center text-xl md:text-5xl">Hello, {{ user.username|title }}
+            <h2 class="greeting glow-text1 flex items-center text-3xl md:text-5xl">Hello, {{ user.username|title }}
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-8 h-8 md:w-12 h-12 ml-3">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M17.982 18.725A7.488 7.488 0 0 0 12 15.75a7.488 7.488 0 0 0-5.982 2.975m11.963 0a9 9 0 1 0-11.963 0m11.963 0A8.966 8.966 0 0 1 12 21a8.966 8.966 0 0 1-5.982-2.275M15 9.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
                 </svg>
             </h2>
         </div>
 
-        <div class="flex flex-row justify-center gap-20">
+        <div class="flex flex-row justify-center gap-28">
             <a href="#totalsid" class="greeting text-lg md:text-2xl hover:underline text-green-600 hover:text-green-700">Totals</a>
             <a href="#monthsid" class="greeting text-lg md:text-2xl hover:underline text-green-600 hover:text-green-700">Months</a>
             <a href="#linksid" class="greeting text-lg md:text-2xl hover:underline text-green-600 hover:text-green-700">Links</a>
         </div>
+
+        <hr class="border-gray-600 border-t-4 my-6"/>
 
         <img src="{% static 'images/new-finance.gif' %}" alt="Finance animation" class="rounded-lg shadow-md w-full h-auto max-w-screen-xl "/>
 
