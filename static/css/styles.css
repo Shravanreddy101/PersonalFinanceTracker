@@ -35,3 +35,10 @@ nav {
 }
 
 
+.greeting1 {
+    font-family: 'Lilita One', cursive;
+    color: #eaf4ff;
+    text-shadow: 0.5px 0.5px #000000;
+    letter-spacing: 1.4px;
+}
+
